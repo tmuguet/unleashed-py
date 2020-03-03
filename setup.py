@@ -31,9 +31,9 @@ setup(
     long_description_content_type="text/x-rst",
     description="Python package to connect to the Unleashed Software inventory management API",
     long_description=read("README.rst"),
-    packages=find_packages('unleashed-py'),
-    package_dir={'': 'unleashed-py'},
-    py_modules=[splitext(basename(path))[0] for path in glob('unleashed-py/*.py')],
+    packages=find_packages('unleashed_py'),
+    package_dir={'': 'unleashed_py'},
+    py_modules=[splitext(basename(path))[0] for path in glob('unleashed_py/*.py')],
     include_package_data=True,
     # packages=find_packages(exclude=('tests',)),
 
