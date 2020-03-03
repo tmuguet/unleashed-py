@@ -78,6 +78,12 @@ class Resource(UnleashedBase):
 		# print(self.address, self.header)
 		return (json.dumps(requests.get(self.address, headers=self.header).json()['Items']))
 
+	def _build_results(self, results):
+		r = requests.get(self.address, headers=self.header).json()['Items']
+		for result in r:
+			if result not in results:
+				results.append(result)
+
 	def all_results(self):
 		"""
 			For any resource return the entire list of those resources in your Unleashed database.
@@ -88,12 +94,13 @@ class Resource(UnleashedBase):
 
 		pages = self.getPages()
 		results = []
-		for i in range(1, pages + 1):
-			self.build_header(i)
-			r = requests.get(self.address, headers=self.header).json()['Items']
-			for result in r:
-				if result not in results:
-					results.append(result)
+		if pages is not None:
+			for i in range(1, pages + 1):
+				self.build_header(i)
+				self._build_results(results)
+		else:
+			self.build_header(None)
+			self._build_results(results)
 
 		return (json.dumps(results))
 
@@ -101,17 +108,25 @@ class Resource(UnleashedBase):
 		"""
 			Method to return the number of pages of information a resouce request has.
 		"""
-		return (requests.get(self.address, headers=self.header).json()['Pagination']['NumberOfPages'])
+		try:
+			return (requests.get(self.address, headers=self.header).json()['Pagination']['NumberOfPages'])
+		except KeyError:
+			# Not paginated
+			return None
 
 	def build_header(self, page_num):
 		self.page = page_num
 		if self.filter is not None:
 			self.header['api-auth-signature'] = self.getSignature(self.filter, self.auth_sig)
-			self.address = self.api_add + '/' + self.resource_name + '/' +str(self.page) + '?' + self.filter
+			self.address = self.api_add + '/' + self.resource_name
+			if self.page is not None:
+				self.address += '/' +str(self.page)
+			self.address += '?' + self.filter
 		else:
 			self.header['api-auth-signature'] = self.getSignature('', self.auth_sig)
-			self.header = self.header
-			self.address = self.api_add + '/' + self.resource_name + '/' +str(self.page)
+			self.address = self.api_add + '/' + self.resource_name
+			if self.page is not None:
+				self.address += '/' +str(self.page)
 		# print(self.address)
 
 class EditableResource(Resource):
