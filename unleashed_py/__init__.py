@@ -7,4 +7,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__)))
 # __all__ = []
 from .unleashed_py import UnleashedBase
 from .unleashed_py import Resource
+from .unleashed_py import Item
+from .unleashed_py import ItemDetail
 from .unleashed_py import EditableResource
