@@ -76,10 +76,14 @@ class Resource(UnleashedBase):
 				json object containing results from first page of get request
 		"""
 		# print(self.address, self.header)
-		return (json.dumps(requests.get(self.address, headers=self.header).json()['Items']))
+		res = requests.get(self.address, headers=self.header)
+		res.raise_for_status()
+		return (json.dumps(res.json()['Items']))
 
 	def _build_results(self, results):
-		r = requests.get(self.address, headers=self.header).json()['Items']
+		res = requests.get(self.address, headers=self.header)
+		res.raise_for_status()
+		r = res.json()['Items']
 		for result in r:
 			if result not in results:
 				results.append(result)
@@ -109,7 +113,9 @@ class Resource(UnleashedBase):
 			Method to return the number of pages of information a resouce request has.
 		"""
 		try:
-			return (requests.get(self.address, headers=self.header).json()['Pagination']['NumberOfPages'])
+			res = requests.get(self.address, headers=self.header)
+			res.raise_for_status()
+			return (res.json()['Pagination']['NumberOfPages'])
 		except KeyError:
 			# Not paginated
 			return None
@@ -155,7 +161,9 @@ class Item(UnleashedBase):
 		"""
 
 		self.build_header()
-		return (json.dumps(requests.get(self.address, headers=self.header).json()))
+		res = requests.get(self.address, headers=self.header)
+		res.raise_for_status()
+		return (json.dumps(res.json()))
 
 	def build_header(self):
 		self.header['api-auth-signature'] = self.getSignature('', self.auth_sig)
@@ -191,8 +199,9 @@ class ItemDetail(UnleashedBase):
 		"""
 
 		self.build_header()
-		r = requests.get(self.address, headers=self.header).json()['Items']
-		return (json.dumps(r))
+		res = requests.get(self.address, headers=self.header)
+		res.raise_for_status()
+		return (json.dumps(res.json()['Items']))
 
 	def build_header(self):
 		self.header['api-auth-signature'] = self.getSignature('', self.auth_sig)
