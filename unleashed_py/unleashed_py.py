@@ -108,6 +108,20 @@ class Resource(UnleashedBase):
 
 		return (json.dumps(results))
 
+	def get_page(self, page):
+		"""
+			For any resource return one page from the list of those resources in your Unleashed database.
+
+			Returns:
+				json object containing every result from get request
+		"""
+
+		results = []
+		self.build_header(page)
+		self._build_results(results)
+
+		return (json.dumps(results))
+
 	def getPages(self):
 		"""
 			Method to return the number of pages of information a resouce request has.
