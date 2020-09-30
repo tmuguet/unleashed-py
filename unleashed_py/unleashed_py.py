@@ -129,6 +129,77 @@ class Resource(UnleashedBase):
 				self.address += '/' +str(self.page)
 		# print(self.address)
 
+class Item(UnleashedBase):
+	"""
+		Class for getting a specific item out of the Unleashed API.
+
+		Input:
+			resource_name: any of the availabe Unleashed Resources that has an Id/Guid URI (e.g. Assemblies, StockOnHand, etc.)
+			resource_id: Guid of the resource to get
+			auth_id : Your user account Authorization ID assigned by Unleashed
+			auth_sig: Your user account Authorization signature assigned by Unleashed
+			api_add: the address of the api access to Unleashed, typically https://api.unleashedsoftware.com
+			**kwargs: Any of the filters availbe for each Unleashed API resource as key-value pairs e.g. productCode='Artifact'
+	"""
+
+	def __init__(self, resource_name, resource_id, auth_id, auth_sig, api_add, **kwargs):
+		super().__init__(auth_id, auth_sig, api_add)
+		self.resource_name = resource_name
+		self.resource_id = resource_id
+
+	def result(self):
+		"""
+				For any resource return the item with the specified Guid
+				Returns:
+						json object containing the result from get request
+		"""
+
+		self.build_header()
+		return (json.dumps(requests.get(self.address, headers=self.header).json()))
+
+	def build_header(self):
+		self.header['api-auth-signature'] = self.getSignature('', self.auth_sig)
+		self.header = self.header
+		self.address = self.api_add + '/' + self.resource_name + '/' + str(self.resource_id)
+		# print(self.address)
+
+class ItemDetail(UnleashedBase):
+	"""
+		Class for getting details on a specific item out of the Unleashed API.
+
+		Input:
+			resource_name: any of the availabe Unleashed Resources that has an Id/Guid URI and option (e.g. StockOnHand, etc.) 
+			resource_id: Guid of the resource to get
+			detail: name of the endpoint (e.g. AllWarehouses for StockOnHand)
+			auth_id : Your user account Authorization ID assigned by Unleashed
+			auth_sig: Your user account Authorization signature assigned by Unleashed
+			api_add: the address of the api access to Unleashed, typically https://api.unleashedsoftware.com
+			**kwargs: Any of the filters availbe for each Unleashed API resource as key-value pairs e.g. productCode='Artifact'
+	"""
+
+	def __init__(self, resource_name, resource_id, detail, auth_id, auth_sig, api_add, **kwargs):
+		super().__init__(auth_id, auth_sig, api_add)
+		self.resource_name = resource_name
+		self.resource_id = resource_id
+		self.detail = detail
+
+	def all_results(self):
+		"""
+				For any resource return the entire list of those resources in your Unleashed database.
+				Returns:
+						json object containing every result from get request
+		"""
+
+		self.build_header()
+		r = requests.get(self.address, headers=self.header).json()['Items']
+		return (json.dumps(r))
+
+	def build_header(self):
+		self.header['api-auth-signature'] = self.getSignature('', self.auth_sig)
+		self.header = self.header
+		self.address = self.api_add + '/' + self.resource_name + '/' + str(self.resource_id) + '/' + self.detail
+		# print(self.address)
+
 class EditableResource(Resource):
 	"""
 		Class for getting and posting information out of the Unleashed API.
