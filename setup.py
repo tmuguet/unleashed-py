@@ -5,7 +5,6 @@ import io
 import os
 import re
 from glob import glob
-from setuptools import find_packages
 from setuptools import setup
 from os.path import basename
 from os.path import dirname
@@ -31,11 +30,8 @@ setup(
     long_description_content_type="text/x-rst",
     description="Python package to connect to the Unleashed Software inventory management API",
     long_description=read("README.rst"),
-    packages=find_packages('unleashed-py'),
-    package_dir={'': 'unleashed-py'},
-    py_modules=[splitext(basename(path))[0] for path in glob('unleashed-py/*.py')],
+    packages=['unleashed_py'],
     include_package_data=True,
-    # packages=find_packages(exclude=('tests',)),
 
     install_requires=['requests'],
 

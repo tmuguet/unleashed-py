@@ -43,6 +43,8 @@ Requirements
 ^^^^^^^^^^^^
 requests, hmac, hashlib, base64, json, re, & datetime
 
+Requires pytest and requests-mock for running tests
+
 Compatibility
 -------------
 Built on python 3.7.3
